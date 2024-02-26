@@ -1,12 +1,19 @@
-import MyAppBar from "@/components/MyAppBar";
-import Charts from "@/components/Chart";
-import Box from "@mui/material/Box";
-import SearchBar from "@/components/SearchBar";
-import Table from "@/components/Table";
-import Menu from "@/components/Menu";
-import { Grid } from "@mui/material";
+import MyAppBar from '@/components/MyAppBar';
+import Charts from '@/components/Chart';
+import Box from '@mui/material/Box';
+import SearchBar from '@/components/SearchBar';
+import Table from '@/components/Table';
+import Menu from '@/components/Menu';
+import { Grid } from '@mui/material';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { fetchStockCodes } from '@/store/stockThunks';
 
 export default function Home() {
+  const dispatch = useDispatch<any>();
+  useEffect(() => {
+    dispatch(fetchStockCodes());
+  }, [dispatch]);
   return (
     <>
       <Box sx={{ flexGrow: 1 }}>
@@ -15,16 +22,16 @@ export default function Home() {
         </MyAppBar>
       </Box>
       <Grid container spacing={0}>
-        <Grid xs>
+        <Grid>
           <Menu></Menu>
         </Grid>
         {/* content */}
-        <Grid xs={10}>
+        <Grid>
           <Grid container>
-            <Grid xs>
+            <Grid>
               <Menu></Menu>
             </Grid>
-            <Grid xs={10}>
+            <Grid>
               <Box component="section" m={1} p={2}>
                 <Charts></Charts>
               </Box>
