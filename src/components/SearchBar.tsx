@@ -5,22 +5,20 @@ import { subYears, format } from 'date-fns';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { StockCodes } from '@/store/interfaces/StockData';
-import { fetchStockData } from '@/store/stockThunks';
+import { fetchStockMonthRevenue } from '@/store/stockThunks';
 
 export default function SearchBar() {
   const dispatch = useDispatch<any>();
   const { stockCodes } = useSelector((state: RootState) => state.stock);
-  const [date, setDate] = useState({
-    startDate: format(subYears(new Date(), 5), 'yyyy-MM-dd'),
-    endDate: format(new Date(), 'yyyy-MM-dd'),
-  });
 
   const handleStockCodeChange = (
     event: React.ChangeEvent<{}>,
     stockCode: string | StockCodes | null
   ) => {
+    const startDate = format(subYears(new Date(), 5), 'yyyy-02-01');
+    const endDate = format(new Date(), 'yyyy-02-01');
     if (stockCode && typeof stockCode !== 'string') {
-      dispatch(fetchStockData(stockCode.id, date.startDate, date.endDate));
+      dispatch(fetchStockMonthRevenue(stockCode, startDate, endDate));
     }
   };
 

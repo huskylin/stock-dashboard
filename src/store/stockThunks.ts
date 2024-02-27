@@ -1,8 +1,8 @@
 import { ThunkAction } from 'redux-thunk';
 import { RootState } from './store';
-import { setStockCodes, setMonthlyRevenue, setMonthlyGrowthRate } from './stockSlice';
+import { setStockCodes, setMonthlyRevenue, setMonthlyGrowthRate, setCurrentStockCode } from './stockSlice';
 import { Action } from 'redux';
-import { MonthlyGrowthRate, MonthlyRevenue, StockData, StockInfo, Response } from './interfaces/StockData';
+import { MonthlyGrowthRate, MonthlyRevenue, StockData, StockInfo, Response, StockCodes } from './interfaces/StockData';
 import { subYears, format } from 'date-fns';
 import axios from 'axios';
 
@@ -27,8 +27,8 @@ export const fetchStockCodes = (): ThunkAction<void, RootState, unknown, Action<
     }
 };
 
-export const fetchStockData = (
-    stockCode: string,
+export const fetchStockMonthRevenue = (
+    stockCode: StockCodes,
     startDate: string,
     endDate: string
 ): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch) => {
@@ -36,22 +36,23 @@ export const fetchStockData = (
         const preYearStartDate = subYears(new Date(startDate), 1); // 往前一年
         const preYearStartDateStr = format(preYearStartDate, 'yyyy-MM-dd');
         const response = await axios.get<Response>(
-            `${API_BASE_URL}?dataset=TaiwanStockMonthRevenue&data_id=${stockCode}&start_date=${preYearStartDateStr}&end_date=${endDate}&token=${apiToken}`
+            `${API_BASE_URL}?dataset=TaiwanStockMonthRevenue&data_id=${stockCode.id}&start_date=${preYearStartDateStr}&end_date=${endDate}&token=${apiToken}`
         );
 
         const monthlyRevenue: MonthlyRevenue = {};
         const monthlyGrowthRate: MonthlyGrowthRate = {};
-
         response.data.data.forEach((data: StockData) => {
             // 多撈取前一年資料，計算年增
-            const previousYearData = response.data.data.find((item: StockData) => item.revenue_year === item.revenue_year - 1);
+            const previousYearData = response.data.data.find((item: StockData) => (data.revenue_year - 1) === (item.revenue_year) && data.revenue_month === item.revenue_month);
             if (previousYearData) {
                 const previousYearRevenue = previousYearData.revenue;
-                monthlyGrowthRate[data.date] = ((data.revenue - previousYearRevenue) / previousYearRevenue) * 100;
-                monthlyRevenue[data.date] = data.revenue;
+                const revenueDate = `${data.revenue_year}-${data.revenue_month}`
+                // 年增率精確至小點第二位，月營收單位為千元
+                monthlyGrowthRate[revenueDate] = ((data.revenue / previousYearRevenue - 1) * 100).toFixed(2);
+                monthlyRevenue[revenueDate] = data.revenue / 1000;
             }
         });
-
+        dispatch(setCurrentStockCode(stockCode));
         dispatch(setMonthlyRevenue(monthlyRevenue));
         dispatch(setMonthlyGrowthRate(monthlyGrowthRate));
     } catch (error) {

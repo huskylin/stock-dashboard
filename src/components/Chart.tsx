@@ -1,39 +1,105 @@
-import React, { useState } from "react";
-import ReactECharts from "echarts-for-react";
-import { EChartsOption } from "echarts-for-react";
+import React, { useEffect, useState } from 'react';
+import ReactECharts from 'echarts-for-react';
+import { EChartsOption } from 'echarts-for-react';
+import { RootState } from '@/store/store';
+import { useSelector } from 'react-redux';
 
-const tmp = {
+const initialChartOption = {
+  grid: {
+    left: '3%',
+    right: '3%',
+    bottom: '3%',
+    containLabel: true,
+  },
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'shadow',
+    },
+  },
   xAxis: {
-    type: "category",
-    data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    type: 'category',
+    data: [],
+    max: 'dataMax',
+    splitLine: {
+      show: 'show',
+    },
+    axisLabel: {
+      interval: 11,
+      formatter: (value: string) => value.substring(0, 4),
+    },
   },
   yAxis: [
     {
-      type: "value",
-      show: false,
+      type: 'value',
+      name: '千元',
+      show: true,
+      position: 'left',
     },
     {
-      type: "value",
-      show: false,
+      type: 'value',
+      name: '%',
+      show: true,
+      splitLine: {
+        show: false,
+      },
+      position: 'right',
     },
   ],
   series: [
     {
-      name: "柱状图",
-      type: "bar",
-      data: [120, 200, 150, 80, 70, 110, 130],
+      name: '每月營收',
+      type: 'bar',
       yAxisIndex: 0,
+      color: ['#f6d699'],
+      data: [],
     },
     {
-      name: "折线图",
-      type: "line",
-      data: [120, 132, 101, 134, 90, 230, 210],
+      name: '月營收年增率',
+      type: 'line',
       yAxisIndex: 1,
+      data: [],
+      markLine: {
+        symbol: 'none',
+        silent: true,
+        label: {
+          show: false,
+        },
+        lineStyle: {
+          color: 'red', // 可以根據需要設定線的顏色
+        },
+        data: [
+          { yAxis: 0 }, // 0% 的基準線
+        ],
+      },
     },
   ],
 };
 export default function Chart() {
-  const [options, setOption] = useState<EChartsOption>(tmp);
-
-  return <ReactECharts option={options} />;
+  const [options, setOption] = useState<EChartsOption>(initialChartOption);
+  const { monthlyRevenue, monthlyGrowthRate, currentStockCode } = useSelector(
+    (state: RootState) => state.stock
+  );
+  useEffect(() => {
+    const updatedOption: EChartsOption = {
+      ...initialChartOption,
+      xAxis: { ...initialChartOption.xAxis, data: Object.keys(monthlyRevenue) },
+      series: [
+        {
+          ...initialChartOption.series[0],
+          data: Object.values(monthlyRevenue),
+        },
+        {
+          ...initialChartOption.series[1],
+          data: Object.values(monthlyGrowthRate),
+        },
+      ],
+    };
+    setOption(updatedOption);
+  }, [monthlyRevenue, monthlyGrowthRate, currentStockCode.id]);
+  return (
+    <>
+      <ReactECharts option={options} key={currentStockCode.id} />
+    </>
+  );
 }

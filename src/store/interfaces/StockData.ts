@@ -26,7 +26,7 @@ export interface MonthlyRevenue {
 }
 
 export interface MonthlyGrowthRate {
-    [key: string]: number; // 使用日期作為鍵，值為營收年增率
+    [key: string]: string; // 使用日期作為鍵，值為營收年增率
 }
 
 export interface StockCodes {
