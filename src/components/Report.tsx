@@ -23,8 +23,8 @@ export default function Report() {
   const dispatch = useDispatch<any>();
   const { currentStockCode } = useSelector((state: RootState) => state.stock);
   useEffect(() => {
-    dispatch(fetchStockCodes());
-  }, [dispatch]);
+    setYearRange('5');
+  }, [currentStockCode.id]);
 
   const handelYearRangeChange = (event: SelectChangeEvent) => {
     setYearRange(event.target.value);
@@ -42,7 +42,7 @@ export default function Report() {
           {currentStockCode.name}({currentStockCode.id})
         </Card>
         <Card sx={{ margin: 2, padding: 2 }}>
-          <CardContent
+          <Box
             sx={{
               display: 'flex',
               flexDirection: 'column',
@@ -77,9 +77,12 @@ export default function Report() {
             <Box sx={{ width: '100%' }}>
               <Charts></Charts>
             </Box>
-          </CardContent>
+          </Box>
         </Card>
         <Card sx={{ margin: 2, padding: 2 }}>
+          <ButtonGroup variant="contained" aria-label="Basic button group">
+            <Button>詳細數據</Button>
+          </ButtonGroup>
           <Table></Table>
         </Card>
       </Grid>

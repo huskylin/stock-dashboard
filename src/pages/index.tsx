@@ -29,7 +29,9 @@ export default function Home() {
             <Grid>
               <Menu></Menu>
             </Grid>
-            <Report></Report>
+            <Grid sx={{ width: '717px' }}>
+              <Report></Report>
+            </Grid>
           </Grid>
         </Grid>
       </Grid>
