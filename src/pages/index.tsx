@@ -7,6 +7,7 @@ import { Grid } from '@mui/material';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchStockCodes } from '@/store/stockThunks';
+import { stockMenuItems, stockSubMenuItems } from '@/utils/menuItems';
 
 export default function Home() {
   const dispatch = useDispatch<any>();
@@ -20,14 +21,14 @@ export default function Home() {
           <SearchBar></SearchBar>
         </MyAppBar>
       </Box>
-      <Grid container spacing={0}>
+      <Grid container spacing={0} sx={{ minHeight: '100vh' }}>
         <Grid>
-          <Menu></Menu>
+          <Menu items={stockMenuItems}></Menu>
         </Grid>
         <Grid>
-          <Grid container>
+          <Grid container sx={{ borderLeft: '1px solid #dddddd' }}>
             <Grid>
-              <Menu></Menu>
+              <Menu items={stockSubMenuItems}></Menu>
             </Grid>
             <Grid sx={{ width: '717px' }}>
               <Report></Report>
