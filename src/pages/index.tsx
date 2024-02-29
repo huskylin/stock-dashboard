@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchStockCodes } from '@/store/stockThunks';
 import { stockMenuItems, stockSubMenuItems } from '@/utils/menuItems';
+import theme from '@/style/theme';
 
 export default function Home() {
   const dispatch = useDispatch<any>();
@@ -16,12 +17,18 @@ export default function Home() {
   }, [dispatch]);
   return (
     <>
-      <Box sx={{ flexGrow: 1 }}>
-        <MyAppBar>
-          <SearchBar></SearchBar>
-        </MyAppBar>
-      </Box>
-      <Grid container spacing={0} sx={{ minHeight: '100vh' }}>
+      <MyAppBar>
+        <SearchBar></SearchBar>
+      </MyAppBar>
+
+      <Grid
+        container
+        spacing={0}
+        sx={{
+          minHeight: '100vh',
+          background: theme.palette.background.default,
+        }}
+      >
         <Grid>
           <Menu items={stockMenuItems}></Menu>
         </Grid>

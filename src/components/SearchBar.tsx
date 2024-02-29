@@ -28,13 +28,20 @@ export default function SearchBar() {
         id="stock-code"
         fullWidth
         options={stockCodes}
-        sx={{ width: '500px' }}
+        sx={{ width: '500px', padding: '0px' }}
         onChange={handleStockCodeChange}
         getOptionLabel={(item: string | StockCodes) =>
           typeof item !== 'string' ? `${item.id} ${item.name}` : ''
         }
         renderInput={(params) => (
-          <TextField {...params} placeholder="輸入台／美股代號，查看公司價值" />
+          <TextField
+            sx={{
+              padding: '0',
+              '& .MuiInputBase-input': { padding: '0 !important' },
+            }}
+            {...params}
+            placeholder="輸入台／美股代號，查看公司價值"
+          />
         )}
       />
     )
