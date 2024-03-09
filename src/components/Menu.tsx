@@ -1,20 +1,29 @@
+import theme from '@/style/theme';
 import { MenuList, MenuItem } from '@mui/material';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRouter } from 'next/router';
 interface Link {
+  name: string;
   link?: string;
   icon?: any;
-  name: string;
+  pathname?: string;
 }
 interface MenuProps {
   items: Link[];
+  textAlign?: string;
+  fontWeight?: string;
 }
 
-export default function Menu({ items }: MenuProps) {
-  const [selectedItem, setSelectedItem] = useState<string>();
-  const handleItemClick = (item: Link) => {
-    setSelectedItem(item.name);
-  };
+export default function Menu({
+  items,
+  textAlign = 'center',
+  fontWeight = '400',
+}: MenuProps) {
+  const router = useRouter();
+  const { pathname } = router;
+  const pathParts = pathname.split('/');
+  const analysisPart = pathParts[1];
+
   return (
     <MenuList>
       {items.map((item: Link) => {
@@ -23,24 +32,27 @@ export default function Menu({ items }: MenuProps) {
             key={item.name}
             sx={{
               borderLeft: `3px solid ${
-                selectedItem === item.name ? '#0386f4' : 'transparent'
+                item.pathname === analysisPart
+                  ? theme.palette.primary.main
+                  : 'transparent'
               }`,
-              margin: '0 3px 18px 0',
+              margin: item.icon ? '0 3px 18px 0' : '',
               padding: '9px 15px',
               marginLeft: '-1px',
               ':hover': {
-                borderLeft: '3px solid #0386f4',
-                color: '#0386f4',
+                borderLeft: `3px solid ${theme.palette.primary.main}`,
+                color: `${theme.palette.primary.main}`,
               },
             }}
-            onClick={() => handleItemClick(item)}
+            selected={item.pathname === analysisPart}
           >
             <div
               style={{
                 width: '100%',
                 display: 'flex',
                 flexDirection: 'column',
-                alignItems: 'center',
+                alignItems: textAlign,
+                fontWeight,
               }}
             >
               {item.icon}

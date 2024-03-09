@@ -1,26 +1,49 @@
-import { useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { subYears, format } from 'date-fns';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { StockCodes } from '@/store/interfaces/StockData';
-import { fetchStockMonthRevenue } from '@/store/stockThunks';
+import { fetchStockCodes, fetchStockMonthRevenue } from '@/store/stockThunks';
+import { useRouter } from 'next/router';
 
-export default function SearchBar() {
+export default function SearchBar({
+  stockCode,
+}: {
+  stockCode: string | undefined;
+}) {
   const dispatch = useDispatch<any>();
   const { stockCodes } = useSelector((state: RootState) => state.stock);
+  const router = useRouter();
 
-  const handleStockCodeChange = (
-    event: React.ChangeEvent<{}>,
-    stockCode: string | StockCodes | null
-  ) => {
-    const startDate = format(subYears(new Date(), 5), 'yyyy-02-01');
-    const endDate = format(new Date(), 'yyyy-02-01');
-    if (stockCode && typeof stockCode !== 'string') {
-      dispatch(fetchStockMonthRevenue(stockCode, startDate, endDate));
+  const fetchData = useCallback(
+    (code: string | null) => {
+      const startDate = format(subYears(new Date(), 5), 'yyyy-02-01');
+      const endDate = format(new Date(), 'yyyy-02-01');
+      if (code) {
+        dispatch(fetchStockMonthRevenue(code, startDate, endDate));
+      }
+    },
+    [dispatch]
+  );
+
+  useEffect(() => {
+    if (stockCode) {
+      fetchData(stockCode);
     }
-  };
+    dispatch(fetchStockCodes());
+  }, [dispatch, fetchData, stockCode]);
+
+  const handleStockCodeChange = useCallback(
+    (event: React.ChangeEvent<{}>, stockCodeItem: StockCodes | null) => {
+      if (stockCodeItem) {
+        fetchData(stockCodeItem.id);
+        router.push(`/analysis/${stockCodeItem.id}`);
+      }
+    },
+    [fetchData, router]
+  );
 
   return (
     stockCodes && (

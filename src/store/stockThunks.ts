@@ -28,7 +28,7 @@ export const fetchStockCodes = (): ThunkAction<void, RootState, unknown, Action<
 };
 
 export const fetchStockMonthRevenue = (
-    stockCode: StockCodes,
+    stockCode: string,
     startDate: string,
     endDate: string
 ): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch) => {
@@ -36,7 +36,7 @@ export const fetchStockMonthRevenue = (
         const preYearStartDate = subYears(new Date(startDate), 1); // 往前一年
         const preYearStartDateStr = format(preYearStartDate, 'yyyy-MM-dd');
         const response = await axios.get<Response>(
-            `${API_BASE_URL}?dataset=TaiwanStockMonthRevenue&data_id=${stockCode.id}&start_date=${preYearStartDateStr}&end_date=${endDate}&token=${apiToken}`
+            `${API_BASE_URL}?dataset=TaiwanStockMonthRevenue&data_id=${stockCode}&start_date=${preYearStartDateStr}&end_date=${endDate}&token=${apiToken}`
         );
 
         const monthlyRevenue: MonthlyRevenue = {};

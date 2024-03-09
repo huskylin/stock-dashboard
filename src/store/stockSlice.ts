@@ -2,14 +2,14 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { MonthlyGrowthRate, MonthlyRevenue, StockCodes } from './interfaces/StockData';
 
 interface StockState {
-    currentStockCode: StockCodes;
+    currentStockCode: string;
     stockCodes: StockCodes[];
     monthlyRevenue: MonthlyRevenue;
     monthlyGrowthRate: MonthlyGrowthRate;
 }
 
 const initialState: StockState = {
-    currentStockCode: { id: '', name: '' },
+    currentStockCode: '',
     stockCodes: [],
     monthlyRevenue: {},
     monthlyGrowthRate: {},
@@ -19,7 +19,7 @@ const stockSlice = createSlice({
     name: 'stock',
     initialState,
     reducers: {
-        setCurrentStockCode: (state, action: PayloadAction<StockCodes>) => {
+        setCurrentStockCode: (state, action: PayloadAction<string>) => {
             state.currentStockCode = action.payload;
         },
         setStockCodes: (state, action: PayloadAction<StockCodes[]>) => {

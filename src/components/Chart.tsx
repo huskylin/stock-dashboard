@@ -3,6 +3,7 @@ import ReactECharts from 'echarts-for-react';
 import { EChartsOption } from 'echarts-for-react';
 import { RootState } from '@/store/store';
 import { useSelector } from 'react-redux';
+import theme from '@/style/theme';
 
 const initialChartOption = {
   grid: {
@@ -17,6 +18,7 @@ const initialChartOption = {
       type: 'shadow',
     },
   },
+  legend: {},
   xAxis: {
     type: 'category',
     data: [],
@@ -51,13 +53,14 @@ const initialChartOption = {
       name: '每月營收',
       type: 'bar',
       yAxisIndex: 0,
-      color: ['#f6d699'],
+      color: [theme.palette.secondary.main],
       data: [],
     },
     {
       name: '月營收年增率',
       type: 'line',
       yAxisIndex: 1,
+      color: [theme.palette.warning.main],
       data: [],
       markLine: {
         symbol: 'none',
@@ -96,10 +99,10 @@ export default function Chart() {
       ],
     };
     setOption(updatedOption);
-  }, [monthlyRevenue, monthlyGrowthRate, currentStockCode.id]);
+  }, [monthlyRevenue, monthlyGrowthRate, currentStockCode]);
   return (
     <>
-      <ReactECharts option={options} key={currentStockCode.id} />
+      <ReactECharts option={options} key={currentStockCode} />
     </>
   );
 }

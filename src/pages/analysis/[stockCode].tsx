@@ -1,30 +1,42 @@
-import Charts from '@/components/Chart';
-import Box from '@mui/material/Box';
-import Table from '@/components/Table';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
+import { fetchStockCodes, fetchStockMonthRevenue } from '@/store/stockThunks';
+import { RootState } from '@/store/store';
 import {
+  Box,
   Button,
   ButtonGroup,
   Card,
-  CardContent,
-  FormControl,
   Grid,
-  MenuItem,
-  Select,
   SelectChangeEvent,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchStockCodes, fetchStockMonthRevenue } from '@/store/stockThunks';
 import { format, subYears } from 'date-fns';
-import { RootState } from '@/store/store';
+import Table from '@/components/Table';
+import Charts from '@/components/Chart';
+import Selector from '@/components/Selector';
 
-export default function Report() {
-  const [yearRange, setYearRange] = useState<string>('5');
+const yearRangeItems = [
+  { text: '近 3 年', value: '3' },
+  { text: '近 5 年', value: '5' },
+  { text: '近 8 年', value: '8' },
+];
+export default function AnalysisPage() {
   const dispatch = useDispatch<any>();
-  const { currentStockCode } = useSelector((state: RootState) => state.stock);
+  const router = useRouter();
+  const { stockCode } = router.query;
+  const [yearRange, setYearRange] = useState<string>('5');
+  const { currentStockCode, stockCodes } = useSelector(
+    (state: RootState) => state.stock
+  );
+
+  useEffect(() => {
+    dispatch(fetchStockCodes());
+  }, [dispatch]);
+
   useEffect(() => {
     setYearRange('5');
-  }, [currentStockCode.id]);
+  }, [stockCode]);
 
   const handelYearRangeChange = (event: SelectChangeEvent) => {
     setYearRange(event.target.value);
@@ -37,9 +49,16 @@ export default function Report() {
   };
   return (
     <>
-      <Grid>
+      <Grid key={currentStockCode}>
         <Card sx={{ margin: 2, padding: 2 }}>
-          {currentStockCode.name}({currentStockCode.id})
+          {currentStockCode && (
+            <b style={{ fontSize: '18px' }}>
+              <span style={{ marginRight: '6px' }}>
+                {stockCodes.find((item) => item.id === currentStockCode)?.name}
+              </span>
+              <span>({currentStockCode})</span>
+            </b>
+          )}
         </Card>
         <Card sx={{ margin: 2, padding: 2 }}>
           <Box
@@ -61,19 +80,12 @@ export default function Report() {
               <ButtonGroup variant="contained" aria-label="Basic button group">
                 <Button>每月營收</Button>
               </ButtonGroup>
-              <FormControl size="small">
-                <Select
-                  id="year-range-select-label"
-                  value={yearRange}
-                  onChange={handelYearRangeChange}
-                >
-                  <MenuItem value={'3'}>近 3 年</MenuItem>
-                  <MenuItem value={'5'}>近 5 年</MenuItem>
-                  <MenuItem value={'8'}>近 8 年</MenuItem>
-                </Select>
-              </FormControl>
+              <Selector
+                defaultValue={yearRange}
+                items={yearRangeItems}
+                onChange={handelYearRangeChange}
+              ></Selector>
             </Box>
-
             <Box sx={{ width: '100%' }}>
               <Charts></Charts>
             </Box>
