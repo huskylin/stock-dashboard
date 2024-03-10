@@ -1,4 +1,5 @@
-import { FormControl, MenuItem, Select } from '@mui/material';
+import { defaultYearRange } from '@/utils/date';
+import { FormControl, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 
 interface TimeSelectorItem {
   value: string;
@@ -7,11 +8,11 @@ interface TimeSelectorItem {
 interface TimeSelectorProps {
   defaultValue?: string;
   items: TimeSelectorItem[];
-  onChange: any;
+  onChange: (event: SelectChangeEvent) => void;
 }
 
 export default function Selector({
-  defaultValue = '5',
+  defaultValue = defaultYearRange,
   items,
   onChange,
 }: TimeSelectorProps) {

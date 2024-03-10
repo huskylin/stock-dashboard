@@ -1,13 +1,12 @@
-import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import theme from '@/style/theme';
 
-export interface MyAppBarProps {
+export interface StockAppBarProps {
   children?: React.ReactNode;
 }
 
-export default function MyAppBar(props: MyAppBarProps) {
+export default function stockAppBar(props: StockAppBarProps) {
   return (
     <AppBar
       position="static"

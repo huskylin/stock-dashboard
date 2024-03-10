@@ -80,9 +80,8 @@ const initialChartOption = {
 };
 export default function Chart() {
   const [options, setOption] = useState<EChartsOption>(initialChartOption);
-  const { monthlyRevenue, monthlyGrowthRate, currentStockCode } = useSelector(
-    (state: RootState) => state.stock
-  );
+  const { monthlyRevenue, monthlyGrowthRate, currentStockCode, loading } =
+    useSelector((state: RootState) => state.stock);
   useEffect(() => {
     const updatedOption: EChartsOption = {
       ...initialChartOption,
@@ -102,7 +101,11 @@ export default function Chart() {
   }, [monthlyRevenue, monthlyGrowthRate, currentStockCode]);
   return (
     <>
-      <ReactECharts option={options} key={currentStockCode} />
+      <ReactECharts
+        option={options}
+        key={currentStockCode}
+        showLoading={loading.stockMonthRevenue}
+      />
     </>
   );
 }

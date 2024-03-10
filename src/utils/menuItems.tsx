@@ -43,6 +43,7 @@ export const stockMenuItems = [
     icon: <AnnouncementIcon sx={{ color: '#526fd7' }}></AnnouncementIcon>,
   },
 ];
+
 export const stockSubMenuItems = [
   { name: '每月營收', pathname: 'analysis' },
   { name: '每股盈餘' },

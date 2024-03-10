@@ -1,19 +1,24 @@
-import { Provider, useDispatch } from 'react-redux';
+import { Provider } from 'react-redux';
 import { AppProps } from 'next/app';
 import store from '../store/store';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '@/style/theme';
-import MyAppBar from '@/components/MyAppBar';
-import SearchBar from '@/components/SearchBar';
+import MyAppBar from '@/components/stockAppBar';
+import SearchBar from '@/components/searchBar';
 import { Grid } from '@mui/material';
-import Menu from '@/components/Menu';
+import Menu from '@/components/menu';
 import { stockMenuItems, stockSubMenuItems } from '@/utils/menuItems';
 import { useRouter } from 'next/router';
 
-const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
+const MyApp = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
   const { stockCode } = router.query;
-  const stockCodeStr = Array.isArray(stockCode) ? stockCode[0] : stockCode;
+
+  if (stockCode == undefined || Array.isArray(stockCode)) {
+    return;
+  }
+
+  const stockCodeStr = stockCode;
 
   return (
     <Provider store={store}>

@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
-import { fetchStockCodes, fetchStockMonthRevenue } from '@/store/stockThunks';
+import { getStockCodesOption, getStockMonthRevenue } from '@/store/stockThunks';
 import { RootState } from '@/store/store';
 import {
   Box,
@@ -11,53 +11,73 @@ import {
   Grid,
   SelectChangeEvent,
 } from '@mui/material';
-import { format, subYears } from 'date-fns';
-import Table from '@/components/Table';
-import Charts from '@/components/Chart';
-import Selector from '@/components/Selector';
+import Table from '@/components/stockTable';
+import Charts from '@/components/chart';
+import Selector from '@/components/selector';
+import {
+  subYearDateStr,
+  yearDateStr,
+  defaultYearRange,
+  yearRangeItems,
+} from '@/utils/date';
+import { Action, ThunkDispatch } from '@reduxjs/toolkit';
 
-const yearRangeItems = [
-  { text: '近 3 年', value: '3' },
-  { text: '近 5 年', value: '5' },
-  { text: '近 8 年', value: '8' },
-];
 export default function AnalysisPage() {
-  const dispatch = useDispatch<any>();
+  const dispatch =
+    useDispatch<ThunkDispatch<RootState, unknown, Action<string>>>();
   const router = useRouter();
   const { stockCode } = router.query;
-  const [yearRange, setYearRange] = useState<string>('5');
+  const [yearRange, setYearRange] = useState<string>(defaultYearRange);
   const { currentStockCode, stockCodes } = useSelector(
     (state: RootState) => state.stock
   );
+  const abortControllerRef = useRef<AbortController>();
 
   useEffect(() => {
-    dispatch(fetchStockCodes());
+    dispatch(getStockCodesOption());
   }, [dispatch]);
 
   useEffect(() => {
-    setYearRange('5');
+    // 每次進入頁面，把選單年份切到預設值
+    setYearRange(defaultYearRange);
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, [stockCode]);
 
   const handelYearRangeChange = (event: SelectChangeEvent) => {
     setYearRange(event.target.value);
-    const startDate = format(
-      subYears(new Date(), parseInt(event.target.value)),
-      'yyyy-02-01'
+    const startDate = subYearDateStr(new Date(), parseInt(event.target.value));
+    const endDate = yearDateStr(new Date());
+    // 選單切換過快就取消前一個請求
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    abortControllerRef.current = new AbortController();
+    dispatch(
+      getStockMonthRevenue({
+        stockCode: currentStockCode,
+        startDate,
+        endDate,
+        signal: abortControllerRef.current.signal,
+      })
     );
-    const endDate = format(new Date(), 'yyyy-02-01');
-    dispatch(fetchStockMonthRevenue(currentStockCode, startDate, endDate));
   };
   return (
     <>
       <Grid key={currentStockCode}>
         <Card sx={{ margin: 2, padding: 2 }}>
-          {currentStockCode && (
+          {currentStockCode ? (
             <b style={{ fontSize: '18px' }}>
               <span style={{ marginRight: '6px' }}>
                 {stockCodes.find((item) => item.id === currentStockCode)?.name}
               </span>
               <span>({currentStockCode})</span>
             </b>
+          ) : (
+            <span>...loading</span>
           )}
         </Card>
         <Card sx={{ margin: 2, padding: 2 }}>

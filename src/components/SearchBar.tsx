@@ -1,48 +1,69 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import { subYears, format } from 'date-fns';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { StockCodes } from '@/store/interfaces/StockData';
-import { fetchStockCodes, fetchStockMonthRevenue } from '@/store/stockThunks';
+import { getStockMonthRevenue } from '@/store/stockThunks';
 import { useRouter } from 'next/router';
+import { subYearDateStr, yearDateStr } from '@/utils/date';
+import { Action, ThunkDispatch } from '@reduxjs/toolkit';
 
 export default function SearchBar({
   stockCode,
 }: {
   stockCode: string | undefined;
 }) {
-  const dispatch = useDispatch<any>();
-  const { stockCodes } = useSelector((state: RootState) => state.stock);
+  const dispatch =
+    useDispatch<ThunkDispatch<RootState, unknown, Action<string>>>();
+  const { stockCodes, loading } = useSelector(
+    (state: RootState) => state.stock
+  );
   const router = useRouter();
+  const abortControllerRef = useRef<AbortController>();
 
   const fetchData = useCallback(
     (code: string | null) => {
-      const startDate = format(subYears(new Date(), 5), 'yyyy-02-01');
-      const endDate = format(new Date(), 'yyyy-02-01');
+      abortControllerRef.current = new AbortController();
+      const startDate = subYearDateStr(new Date(), 5);
+      const endDate = yearDateStr(new Date());
       if (code) {
-        dispatch(fetchStockMonthRevenue(code, startDate, endDate));
+        dispatch(
+          getStockMonthRevenue({
+            stockCode: code,
+            startDate,
+            endDate,
+            signal: abortControllerRef.current.signal,
+          })
+        );
       }
     },
     [dispatch]
   );
 
   useEffect(() => {
-    if (stockCode) {
-      fetchData(stockCode);
+    if (!stockCode) {
+      return;
     }
-    dispatch(fetchStockCodes());
+    fetchData(stockCode);
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, [dispatch, fetchData, stockCode]);
 
   const handleStockCodeChange = useCallback(
     (event: React.ChangeEvent<{}>, stockCodeItem: StockCodes | null) => {
       if (stockCodeItem) {
-        fetchData(stockCodeItem.id);
-        router.push(`/analysis/${stockCodeItem.id}`);
+        try {
+          router.push(`/analysis/${stockCodeItem.id}`);
+        } catch {
+          throw new Error('fetchData failed');
+        }
       }
     },
-    [fetchData, router]
+    [router]
   );
 
   return (
@@ -51,6 +72,7 @@ export default function SearchBar({
         id="stock-code"
         fullWidth
         options={stockCodes}
+        loading={loading.stockCodesOption}
         sx={{ width: '500px', padding: '0px' }}
         onChange={handleStockCodeChange}
         getOptionLabel={(item: string | StockCodes) =>
