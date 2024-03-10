@@ -28,7 +28,7 @@ export default function AnalysisPage() {
   const router = useRouter();
   const { stockCode } = router.query;
   const [yearRange, setYearRange] = useState<string>(defaultYearRange);
-  const { currentStockCode, stockCodes } = useSelector(
+  const { currentStockCode, stockCodes, loading } = useSelector(
     (state: RootState) => state.stock
   );
   const abortControllerRef = useRef<AbortController>();
@@ -69,15 +69,15 @@ export default function AnalysisPage() {
     <>
       <Grid key={currentStockCode}>
         <Card sx={{ margin: 2, padding: 2 }}>
-          {currentStockCode ? (
+          {loading.stockCodesOption ? (
+            <span>...Loading</span>
+          ) : (
             <b style={{ fontSize: '18px' }}>
               <span style={{ marginRight: '6px' }}>
                 {stockCodes.find((item) => item.id === currentStockCode)?.name}
               </span>
               <span>({currentStockCode})</span>
             </b>
-          ) : (
-            <span>...loading</span>
           )}
         </Card>
         <Card sx={{ margin: 2, padding: 2 }}>
