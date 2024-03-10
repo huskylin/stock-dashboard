@@ -1,6 +1,18 @@
 # StockDashboard
+
 ## 專案簡介
-這是一個使用 React 和 NextJS 框架，UI 元件使用 MUI (Material-UI)，狀態管理上使用了 Redux Toolkit，圖表使用 ECharts，時間計算使用 date-fns，實作了類似財報狗的股票分析網站。
+
+這是一個實作了類似財報狗的股票分析網站。
+
+使用 React 和 NextJS 框架
+
+UI 元件使用 MUI (Material-UI)
+
+狀態管理上使用了 Redux Toolkit
+
+圖表使用 ECharts
+
+時間計算使用 date-fns
 
 ## 專案架構
 ```
@@ -17,6 +29,7 @@
 
 ## 開發環境設置
 Node 版本: 18 或 20
+
 安裝相依套件：
 ``` bash
 npm install
@@ -33,13 +46,15 @@ API_TOKEN=your_api_key_here
 ``` bash
 npm run dev
 ```
-透過瀏覽器訪問 http://localhost:3000/analysis/{stockCode} 
+透過瀏覽器訪問 http://localhost:3000/analysis/{stockCode}
+
 即可預覽專案。
+
 例如: http://localhost:3000/analysis/2330 台積電
 
 
 ## 部署
-部屬至Vercel上
+部屬至 Vercel 上
 https://stock-dashboard-eta.vercel.app/analysis/2330
 
 ## 補充 & 已知情況
