@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# StockDashboard
+## 專案簡介
+這是一個使用 React 和 NextJS 框架，UI 元件使用 MUI (Material-UI)，狀態管理上使用了 Redux Toolkit，圖表使用 ECharts，時間計算使用 date-fns，實作了類似財報狗的股票分析網站。
 
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 專案架構
+```
+├── src/
+│   ├── components/        # React元件
+│   ├── pages/             # Next.js頁面
+│   ├── store/             # Redux狀態管理
+│   ├── style/            # 樣式與主題設定
+│   ├── utils/             # 共用的工具函數
+├── .env.local             # 放置本地環境變數
+├── next.config.js         # Next.js配置文件
+├── README.md              # 專案說明文件
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 開發環境設置
+Node 版本: 18 或 20
+安裝相依套件：
+``` bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+設定環境變數：
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+在根目錄下建立 .env.local 文件，並添加 finmind API 金鑰：
+``` env
+API_TOKEN=your_api_key_here
+```
 
-## Learn More
+啟動開發伺服器：
+``` bash
+npm run dev
+```
+透過瀏覽器訪問 http://localhost:3000/analysis/{stockCode} 
+即可預覽專案。
+例如: http://localhost:3000/analysis/2330 台積電
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 部署
+部屬至Vercel上
+https://stock-dashboard-eta.vercel.app/analysis/2330
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## 補充 & 已知情況
+* 如文件需求指示，Menu 只有視覺功能而已
+* 如設計圖所示，每月營收、詳細數據按鈕，只有留一個單一個Button Group
+* 仿照財報狗用路由控制要查詢的股票代碼，不過目前並沒有針對非法股票代碼做檢查與處理
+* 部分回傳資料有異常時，沒有額外做 edge case 處理
+* 股票名稱從api取得，顯示得比較慢
