@@ -3,9 +3,9 @@ import { AppProps } from 'next/app';
 import store from '../store/store';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '@/style/theme';
-import MyAppBar from '@/components/stockAppBar';
-import SearchBar from '@/components/searchBar';
 import { Grid } from '@mui/material';
+import StockAppBar from '@/components/stockAppBar';
+import SearchBar from '@/components/searchBar';
 import Menu from '@/components/menu';
 import { stockMenuItems, stockSubMenuItems } from '@/utils/menuItems';
 import { useRouter } from 'next/router';
@@ -23,9 +23,9 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
-        <MyAppBar>
+        <StockAppBar>
           <SearchBar stockCode={stockCodeStr}></SearchBar>
-        </MyAppBar>
+        </StockAppBar>
         <Grid
           container
           spacing={0}

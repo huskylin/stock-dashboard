@@ -8,12 +8,11 @@ import { getStockMonthRevenue } from '@/store/stockThunks';
 import { useRouter } from 'next/router';
 import { subYearDateStr, yearDateStr } from '@/utils/date';
 import { Action, ThunkDispatch } from '@reduxjs/toolkit';
-
-export default function SearchBar({
-  stockCode,
-}: {
+interface SearchBarProps {
   stockCode: string | undefined;
-}) {
+}
+
+export default function SearchBar({ stockCode }: SearchBarProps) {
   const dispatch =
     useDispatch<ThunkDispatch<RootState, unknown, Action<string>>>();
   const { stockCodes, loading } = useSelector(

@@ -6,7 +6,7 @@ export interface StockAppBarProps {
   children?: React.ReactNode;
 }
 
-export default function stockAppBar(props: StockAppBarProps) {
+export default function StockAppBar(props: StockAppBarProps) {
   return (
     <AppBar
       position="static"
