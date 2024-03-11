@@ -1,4 +1,4 @@
-import { setStockCodes, setMonthlyRevenue, setMonthlyGrowthRate, setCurrentStockCode } from './stockSlice';
+// import { setStockCodes, setMonthlyRevenue, setMonthlyGrowthRate, setCurrentStockCode } from './stockSlice';
 import { subYears, format } from 'date-fns';
 
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -12,7 +12,6 @@ export const getStockCodesOption = createAsyncThunk(
             const response = await fetchStockCodes();
             const uniqueData = filterUniqueData(response.data.data);
             const stockCodes = uniqueData.map((item: StockInfo) => ({ id: item.stock_id, name: item.stock_name }));
-            dispatch(setStockCodes(stockCodes));
             return stockCodes;
         } catch (error) {
             console.error('Error fetching stock codes:', error);
@@ -32,10 +31,6 @@ export const getStockMonthRevenue = createAsyncThunk(
             const preYearStartDateStr = format(preYearStartDate, 'yyyy-MM-dd');
             const response = await fetchStockMonthRevenue(arg.stockCode, preYearStartDateStr, arg.endDate, arg.signal);
             const { monthlyRevenue, monthlyGrowthRate } = calcMonthlyRevenue(response.data.data);
-
-            dispatch(setCurrentStockCode(arg.stockCode));
-            dispatch(setMonthlyRevenue(monthlyRevenue));
-            dispatch(setMonthlyGrowthRate(monthlyGrowthRate));
             return { monthlyRevenue, monthlyGrowthRate, currentStockCode: arg.stockCode };
         } catch (error) {
             console.error(`Error fetching data for stock ${arg.stockCode}:`, error);

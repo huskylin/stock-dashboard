@@ -9,17 +9,19 @@ import SearchBar from '@/components/searchBar';
 import Menu from '@/components/menu';
 import { stockMenuItems, stockSubMenuItems } from '@/utils/menuItems';
 import { useRouter } from 'next/router';
+import Custom404 from './404';
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
+  console.log(Component);
   const router = useRouter();
   const { stockCode } = router.query;
 
-  if (stockCode == undefined || Array.isArray(stockCode)) {
-    return;
-  }
-
   const stockCodeStr = stockCode;
 
+  // 404頁面就不顯示外框
+  if (Component === Custom404) {
+    return <Component {...pageProps} />;
+  }
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>

@@ -9,7 +9,7 @@ import { useRouter } from 'next/router';
 import { subYearDateStr, yearDateStr } from '@/utils/date';
 import { Action, ThunkDispatch } from '@reduxjs/toolkit';
 interface SearchBarProps {
-  stockCode: string | undefined;
+  stockCode: string | undefined | string[];
 }
 
 export default function SearchBar({ stockCode }: SearchBarProps) {
@@ -41,7 +41,7 @@ export default function SearchBar({ stockCode }: SearchBarProps) {
   );
 
   useEffect(() => {
-    if (!stockCode) {
+    if (stockCode === undefined || Array.isArray(stockCode)) {
       return;
     }
     fetchData(stockCode);
