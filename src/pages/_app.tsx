@@ -12,7 +12,6 @@ import { useRouter } from 'next/router';
 import Custom404 from './404';
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
-  console.log(Component);
   const router = useRouter();
   const { stockCode } = router.query;
 
